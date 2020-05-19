@@ -11,29 +11,32 @@ local SCREEN_FRAMERATE = 15
 local screen_refresh_clock
 local screen_dirty = true
 
-local lfo_clocks = {}
-local lfo_sliders = {}
-local lfo_resolution = 128 -- MIDI CC resolution
+local NUM_LFOS = 8
+local LFO_RESOLUTION = 128 -- MIDI CC resolution
+local lfo_freqs = {}
+local lfo_progress = {}
+local lfo_values = {}
 
 local midi_out_device
 local midi_out_channel
 
 
 -- Clock
-local function tick(id, time)
+local function tick(time)
   while true do
-    clock.sync(time)
+    for i = 1, NUM_LFOS do
+      lfo_progress[i] = lfo_progress[i] + 2 * math.pi * (1 / lfo_freqs[i]) --TODO?
+      local value = math.sin(lfo_progress[i])
+      if value ~= lfo_values[i] then
+        lfo_values[i] = value
+        print(i, "Tick", value) --TODO only fire if value has changed
+      end
+    end
     screen_dirty = true
-    print(id, "Tick")
+    clock.sleep(time)
   end
 end
 
-local function start_clocks()
-  local freq = 2
-  for i = 1, 8 do
-    lfo_clocks[i] = clock.run(i, tick, 1 / freq / lfo_resolution)
-  end
-end
 
 -- Encoder input
 function enc(n, delta)
@@ -87,7 +90,13 @@ function init()
 
   midi_out_channel = params:get("midi_out_channel")
 
-  start_clocks()
+  for i = 1, NUM_LFOS do
+    lfo_freqs[i] = 0.5
+    lfo_progress[i] = 0
+  end
+
+  local lfo_max_freq = 0.5 --TODO controlspec
+  clock.run(i, tick, 1 / lfo_max_freq / LFO_RESOLUTION)
 
 end
 
@@ -96,9 +105,11 @@ function redraw()
   screen.clear()
 
   screen.move(10, 10)
-  screen.text("Slowfo")
+  screen.text("Slowfo 1" .. lfo_values[1])
   screen.level(15)
   screen.fill()
+
+  -- TODO draw some sliders/rects
 
   screen.update()
 end
