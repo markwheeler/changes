@@ -1,8 +1,8 @@
 -- Changes
 -- 1.0.0 @markeats
 --
--- Eight connected sine waves
--- over MIDI.
+-- Eight connected sine wave
+-- LFOs over MIDI.
 --
 -- E2 : Left time
 -- E3 : Right time
