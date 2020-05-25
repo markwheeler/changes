@@ -18,7 +18,7 @@ local screen_dirty = true
 local NUM_LFOS = 8
 local LFO_MIN_TIME = 1 -- Secs
 local LFO_MAX_TIME = 60 * 60 * 24
-local LFO_UPDATE_FREQ = 256
+local LFO_UPDATE_FREQ = 128
 local LFO_RESOLUTION = 128 -- MIDI CC resolution
 
 local lfo_freqs = {}
