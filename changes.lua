@@ -41,7 +41,7 @@ end
 
 local function update_freqs()
   for i = 1, NUM_LFOS do
-    lfo_freqs[i] = util.linlin(1, NUM_LFOS, 1 / params:get("time_l"), 1 / params:get("time_r"), i)
+    lfo_freqs[i] = 1 / util.linexp(1, NUM_LFOS, params:get("time_l"), params:get("time_r"), i)
   end
 end
 
@@ -171,6 +171,7 @@ end
 
 function redraw()
   screen.clear()
+  screen.aa(1)
 
   local BAR_W, BAR_H = 1, 41
   local MARGIN_H, MARGIN_V = 6, 6
@@ -178,7 +179,7 @@ function redraw()
 
   -- Draw bars
   for i = 1, NUM_LFOS do
-    local row_x = MARGIN_H + (gutter + BAR_W) * (i - 1)
+    local row_x = util.round(MARGIN_H + (gutter + BAR_W) * (i - 1))
 
     -- Dotted
     for y = 0, BAR_H - 1, 2 do
